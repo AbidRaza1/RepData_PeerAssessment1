@@ -1,25 +1,87 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+## Project 1:
+
+```{r}
+
+xy <- read.csv("activity.csv")  
+          
+str(xy)
+
+xy$date <- as.Date(xy$date)
+
+str(xy)
+
+```
+### The mean of total number of steps
+        
+```{r}  
+
+library(dplyr)
+        
+g <- select(xy, "steps","date")
+
+f <- aggregate(g$steps,by = list(g$date), FUN = sum)
+
+colnames(f)[c(1,2)] <- c("Date", "SUM of Steps") 
+
+hist(f$`SUM of Steps`, breaks = 50, col = "orange", xlab = "Steps", ylab= "Frequency", main = "Total number of steps taken each day")        
+        
+mean(f$`SUM of Steps`, na.rm = TRUE)
+
+median(f$`SUM of Steps`, na.rm = TRUE) 
+
+``` 
+
+### What is the average daily activity pattern?
+
+```{r}  
+
+good <- complete.cases(xy)
+        
+xy1 <- xy[good,][,]
+    
+m <- aggregate(xy1$steps, by = list(xy1$interval), FUN = mean)
+
+str(m) 
+
+plot(m$Group.1, m$x, xlab = "Time Interval",lwd=2, ylab = "Steps",col = 'violet',type = "l", main = "Average daily activity pattern") 
+
+```
 
 
-## Loading and preprocessing the data
+        
+### Time Interval= 835, Steps Taken = 206.1698113
 
 
+                
+### Computing Missing Values
+        
+```{r} 
 
-## What is mean total number of steps taken per day?
+summary(xy) 
 
+```
+        
+### Imputing missing values
+        
+```{r}     
 
+d <- 0
+        
+c <- 0
+        
+for(i in xy$date){
+        
+if (i > d){
+        
+fg <- xy[xy$date == i,]
+        
+fg$steps[is.na(fg$steps)] <- mean(fg$steps , na.rm = T)
+        
+fr <- fg + 1
+        
+d <- i + d
+        
+    
+}} 
+```
 
-## What is the average daily activity pattern?
-
-
-
-## Imputing missing values
-
-
-
-## Are there differences in activity patterns between weekdays and weekends?
